@@ -63,6 +63,7 @@ if($status==false) {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap; /* フレックスアイテムを折り返し可能に */
   }
 
   .navbar a {
@@ -71,10 +72,35 @@ if($status==false) {
     padding: 5px 10px;
     background-color: #4cae4c;
     border-radius: 4px;
+    margin: 5px 0; /* モバイルでの間隔を調整 */
   }
 
   .navbar a:hover {
     background-color: #45a049;
+  }
+
+  /* レスポンシブ対応 */
+  @media (max-width: 768px) {
+    header {
+      font-size: 1.2rem;
+    }
+
+    .navbar {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .navbar a {
+      width: 100%;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    /* スマートフォンなどでは「登録ユーザー一覧」で改行 */
+    .navbar a:nth-child(2) {
+      display: block;
+      width: 100%;
+    }
   }
 
   /* テーブルのスタイル */
@@ -104,17 +130,27 @@ if($status==false) {
     text-decoration: underline;
   }
 
-  /* レスポンシブ対応 */
+  /* テーブル部分のレスポンシブ対応 */
   @media (max-width: 768px) {
-    th, td {
+    table, thead, tbody, th, td, tr {
       display: block;
-      text-align: right;
     }
 
-    th::before {
-      content: attr(data-label);
-      float: left;
+    th {
+      display: none; /* ヘッダーを非表示にする */
+    }
+
+    td {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    td::before {
+      content: attr(data-label); /* 各セルの前にヘッダーの内容を表示 */
       font-weight: bold;
+      text-align: left;
     }
   }
 </style>
@@ -123,7 +159,7 @@ if($status==false) {
     function confirmDelete() {
       return confirm('削除してもいいですか？');
     }
-  </script>
+</script>
 
 </head>
 <body>
@@ -134,9 +170,9 @@ if($status==false) {
     <div>
       <?php if($_SESSION["kanri_flg"] == "1"){ ?>
       <a href="index.php">チーム登録</a>
-      <a href="user_list.php">登録ユーザー一覧</a> <!-- 追加 -->
+      <a href="user_list.php">登録ユーザー一覧</a>
       <?php } ?>
-      <a href="select_g.php">試合一覧</a> <!-- 追加 -->
+      <a href="select_g.php">試合一覧</a>
       <a href="logout.php">ログアウト</a>
     </div>
   </div>
@@ -160,20 +196,17 @@ if($status==false) {
     <tbody>
       <?php foreach($values as $v){ ?>
         <tr>
-          <td><?= h($v["id"]) ?></td>
-          <td><?= h($v["team_name"]) ?></td>
-          <td><a href="<?= h($v["team_url"]) ?>" target="_blank">公式サイト</a></td>
-          <td><?= h($v["stadium_name"]) ?></td>
-          <td><a href="<?= h($v["stadium_url"]) ?>" target="_blank">公式サイト</a></td>
-          <td><?= h($v["naiyou"]) ?></td>
-          <td>
-            <!-- 以下コードにより「更新」と「削除」は管理者のみに表示される -->
+          <td data-label="ID"><?= h($v["id"]) ?></td>
+          <td data-label="チーム名"><?= h($v["team_name"]) ?></td>
+          <td data-label="チームサイト"><a href="<?= h($v["team_url"]) ?>" target="_blank">公式サイト</a></td>
+          <td data-label="メインスタジアム名"><?= h($v["stadium_name"]) ?></td>
+          <td data-label="スタジアムサイト"><a href="<?= h($v["stadium_url"]) ?>" target="_blank">公式サイト</a></td>
+          <td data-label="備考"><?= h($v["naiyou"]) ?></td>
+          <td data-label="操作">
             <?php if($_SESSION["kanri_flg"] == "1"){ ?>
               <a href="detail.php?id=<?=h($v["id"])?>">更新</a>
-              <!-- 削除リンクにconfirmDelete関数を追加 -->
               <a href="delete.php?id=<?=h($v["id"])?>" onclick="return confirmDelete();">削除</a>
             <?php } ?>
-            <!-- 以上が 「更新」と「削除」は管理者のみに表示されるためのコード-->
           </td>
         </tr>
       <?php } ?>

@@ -63,6 +63,7 @@ if($status==false) {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;
   }
 
   .navbar a {
@@ -71,10 +72,30 @@ if($status==false) {
     padding: 5px 10px;
     background-color: #4cae4c;
     border-radius: 4px;
+    margin: 5px 0;
+    font-size: 1rem; /* サイズを調整 */
   }
 
   .navbar a:hover {
     background-color: #45a049;
+  }
+
+  /* ヘッダー部分のレスポンシブ対応 */
+  @media (max-width: 768px) {
+    header {
+      font-size: 1.2rem; /* ヘッダーフォントを小さく */
+    }
+    
+    .navbar {
+      flex-direction: column; /* ナビゲーションを縦に並べる */
+      align-items: flex-start; /* 左揃えに変更 */
+    }
+
+    .navbar a {
+      width: 100%; /* リンクを幅いっぱいに */
+      text-align: center; /* テキストを中央揃え */
+      margin-bottom: 10px;
+    }
   }
 
   /* テーブルのスタイル */
@@ -82,12 +103,14 @@ if($status==false) {
     width: 100%;
     border-collapse: collapse;
     margin-bottom: 20px;
+    overflow-x: auto; /* テーブルが画面に収まらない場合にスクロールを追加 */
   }
 
   th, td {
     padding: 10px;
     text-align: left;
     border-bottom: 1px solid #ddd;
+    white-space: nowrap; /* 改行せずに1行に収める */
   }
 
   th {
@@ -104,17 +127,27 @@ if($status==false) {
     text-decoration: underline;
   }
 
-  /* レスポンシブ対応 */
+  /* テーブル部分のレスポンシブ対応 */
   @media (max-width: 768px) {
-    th, td {
+    table, thead, tbody, th, td, tr {
       display: block;
-      text-align: right;
     }
 
-    th::before {
-      content: attr(data-label);
-      float: left;
+    th {
+      display: none; /* ヘッダーを非表示にする */
+    }
+
+    td {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    td::before {
+      content: attr(data-label); /* 各セルの前にヘッダーの内容を表示 */
       font-weight: bold;
+      text-align: left;
     }
   }
 </style>
@@ -123,7 +156,7 @@ if($status==false) {
     function confirmDelete() {
       return confirm('削除してもいいですか？');
     }
-  </script>
+</script>
 
 </head>
 <body>
@@ -133,9 +166,9 @@ if($status==false) {
     <span><?=$_SESSION["name"]?> さん、こんにちわ！</span>
     <div>
       <?php if($_SESSION["kanri_flg"] == "1"){ ?>
-      <a href="index_g.php">試合登録</a><!-- 追加 -->
+      <a href="index_g.php">試合登録</a>
       <?php } ?>
-      <a href="select.php">チーム一覧</a> <!-- 追加 -->
+      <a href="select.php">チーム一覧</a>
       <a href="logout.php">ログアウト</a>
     </div>
   </div>
@@ -149,33 +182,31 @@ if($status==false) {
       <tr>
         <th>ID</th>
         <th>試合日時</th>
-        <th>チーム名</th>
-        <th>ランク</th>
-        <th>チーム名</th>
-        <th>ランク</th>
-        <th>スタジアム名</th>
+        <th>チームA</th>
+        <th>ランクA</th>
+        <th>チームB</th>
+        <th>ランクB</th>
+        <th>スタジアム</th>
         <th>スタジアムサイト</th>
         <th>備考</th>
         <th>操作</th>
-     
       </tr>
     </thead>
     <tbody>
       <?php foreach($values as $v){ ?>
         <tr>
-          <td><?= h($v["id"]) ?></td>
-          <td><?= h($v["game_day"]) ?></td>
-          <td><?= h($v["team_a"]) ?></td>
-          <td><?= h($v["team_a_lank"]) ?></td>
-          <td><?= h($v["team_b"]) ?></td>
-          <td><?= h($v["team_b_lank"]) ?></td>
-          <td><?= h($v["stadium"]) ?></td>
-          <td><a href="<?= h($v["stadium_url"]) ?>" target="_blank">公式サイト</a></td>
-          <td><?= h($v["naiyou"]) ?></td>
-          <td>
+          <td data-label="ID"><?= h($v["id"]) ?></td>
+          <td data-label="試合日時"><?= h($v["game_day"]) ?></td>
+          <td data-label="チームA"><?= h($v["team_a"]) ?></td>
+          <td data-label="ランクA"><?= h($v["team_a_lank"]) ?></td>
+          <td data-label="チームB"><?= h($v["team_b"]) ?></td>
+          <td data-label="ランクB"><?= h($v["team_b_lank"]) ?></td>
+          <td data-label="スタジアム"><?= h($v["stadium"]) ?></td>
+          <td data-label="スタジアムサイト"><a href="<?= h($v["stadium_url"]) ?>" target="_blank">公式サイト</a></td>
+          <td data-label="備考"><?= h($v["naiyou"]) ?></td>
+          <td data-label="操作">
             <?php if($_SESSION["kanri_flg"] == "1"){ ?>
             <a href="detail_g.php?id=<?=h($v["id"])?>">更新</a>
-              <!-- 削除リンクにconfirmDelete関数を追加 -->
             <a href="delete_g.php?id=<?=h($v["id"])?>" onclick="return confirmDelete();">削除</a>
             <?php } ?>
           </td>
