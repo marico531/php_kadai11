@@ -182,10 +182,10 @@ if($status==false) {
       <tr>
         <th>ID</th>
         <th>試合日時</th>
-        <th>チームA</th>
-        <th>ランクA</th>
-        <th>チームB</th>
-        <th>ランクB</th>
+        <th>チーム</th>
+        <th>ランク</th>
+        <th>チーム</th>
+        <th>ランク</th>
         <th>スタジアム</th>
         <th>スタジアムサイト</th>
         <th>備考</th>

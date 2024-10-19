@@ -63,7 +63,7 @@ if($status==false) {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    flex-wrap: wrap; /* フレックスアイテムを折り返し可能に */
+    flex-wrap: wrap;
   }
 
   .navbar a {
@@ -72,7 +72,7 @@ if($status==false) {
     padding: 5px 10px;
     background-color: #4cae4c;
     border-radius: 4px;
-    margin: 5px 0; /* モバイルでの間隔を調整 */
+    margin: 5px 0;
   }
 
   .navbar a:hover {
@@ -81,76 +81,73 @@ if($status==false) {
 
   /* レスポンシブ対応 */
   @media (max-width: 768px) {
-    header {
-      font-size: 1.2rem;
+    .navbar {
+      flex-direction: column; /* 縦に並べる */
+      align-items: center; /* 中央寄せ */
     }
 
-    .navbar {
-      flex-direction: column;
-      align-items: flex-start;
+    .navbar span {
+      font-size: 1.2rem; /* 名前の文字サイズを小さく */
+      margin-bottom: 10px; /* 余白を追加 */
     }
 
     .navbar a {
       width: 100%;
       text-align: center;
-      margin-bottom: 10px;
+      padding: 10px;
+      font-size: 1rem; /* ボタンの文字サイズを調整 */
+      margin: 5px 0; /* ボタン間の余白 */
     }
 
-    /* スマートフォンなどでは「登録ユーザー一覧」で改行 */
-    .navbar a:nth-child(2) {
-      display: block;
-      width: 100%;
+    header {
+      font-size: 1.3rem; /* ヘッダーの文字サイズを小さく */
     }
   }
 
-  /* テーブルのスタイル */
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 20px;
+  /* カード形式のチーム一覧 */
+  .card-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
   }
 
-  th, td {
-    padding: 10px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
+  .card {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }
 
-  th {
-    background-color: #f2f2f2;
-    color: #333;
+  .card h3 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
   }
 
-  td a {
+  .card p {
+    margin-bottom: 8px;
+    font-size: 1rem;
+  }
+
+  .card a {
     color: #5cb85c;
     text-decoration: none;
+    font-weight: bold;
   }
 
-  td a:hover {
+  .card a:hover {
     text-decoration: underline;
   }
 
-  /* テーブル部分のレスポンシブ対応 */
-  @media (max-width: 768px) {
-    table, thead, tbody, th, td, tr {
-      display: block;
+  /* デスクトップ対応 */
+  @media (min-width: 768px) {
+    .card-container {
+      grid-template-columns: repeat(2, 1fr);
     }
+  }
 
-    th {
-      display: none; /* ヘッダーを非表示にする */
-    }
-
-    td {
-      display: flex;
-      justify-content: space-between;
-      padding: 10px;
-      border-bottom: 1px solid #ddd;
-    }
-
-    td::before {
-      content: attr(data-label); /* 各セルの前にヘッダーの内容を表示 */
-      font-weight: bold;
-      text-align: left;
+  @media (min-width: 1024px) {
+    .card-container {
+      grid-template-columns: repeat(3, 1fr);
     }
   }
 </style>
@@ -181,37 +178,23 @@ if($status==false) {
 <!-- メインコンテンツ -->
 <div>
   <h2>🏉チーム一覧🏉</h2>
-  <table>
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>チーム名</th>
-        <th>チームサイト</th>
-        <th>メインスタジアム名</th>
-        <th>スタジアムサイト</th>
-        <th>備考</th>
-        <th>操作</th>
-      </tr>
-    </thead>
-    <tbody>
-      <?php foreach($values as $v){ ?>
-        <tr>
-          <td data-label="ID"><?= h($v["id"]) ?></td>
-          <td data-label="チーム名"><?= h($v["team_name"]) ?></td>
-          <td data-label="チームサイト"><a href="<?= h($v["team_url"]) ?>" target="_blank">公式サイト</a></td>
-          <td data-label="メインスタジアム名"><?= h($v["stadium_name"]) ?></td>
-          <td data-label="スタジアムサイト"><a href="<?= h($v["stadium_url"]) ?>" target="_blank">公式サイト</a></td>
-          <td data-label="備考"><?= h($v["naiyou"]) ?></td>
-          <td data-label="操作">
-            <?php if($_SESSION["kanri_flg"] == "1"){ ?>
-              <a href="detail.php?id=<?=h($v["id"])?>">更新</a>
-              <a href="delete.php?id=<?=h($v["id"])?>" onclick="return confirmDelete();">削除</a>
-            <?php } ?>
-          </td>
-        </tr>
-      <?php } ?>
-    </tbody>
-  </table>
+  <div class="card-container">
+    <?php foreach($values as $v){ ?>
+      <div class="card">
+        <h3><?= h($v["team_name"]) ?></h3>
+        <p>メインスタジアム: <?= h($v["stadium_name"]) ?></p>
+        <p>スタジアムサイト: <a href="<?= h($v["stadium_url"]) ?>" target="_blank">公式サイト</a></p>
+        <p>チームサイト: <a href="<?= h($v["team_url"]) ?>" target="_blank">公式サイト</a></p>
+        <p>備考: <?= h($v["naiyou"]) ?></p>
+        <div>
+          <?php if($_SESSION["kanri_flg"] == "1"){ ?>
+            <a href="detail.php?id=<?=h($v["id"])?>">更新</a> |
+            <a href="delete.php?id=<?=h($v["id"])?>" onclick="return confirmDelete();">削除</a>
+          <?php } ?>
+        </div>
+      </div>
+    <?php } ?>
+  </div>
 </div>
 
 <script>
@@ -221,4 +204,3 @@ if($status==false) {
 
 </body>
 </html>
-
