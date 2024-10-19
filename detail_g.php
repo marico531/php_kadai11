@@ -106,7 +106,7 @@ $game_time = date("H:i", strtotime($game_day));    // HH:MM 形式
     input[type="submit"] {
       width: 100%;
       padding: 12px;
-      background-color: #3498db;
+      background-color: #2c3e50;
       color: white;
       border: none;
       border-radius: 5px;

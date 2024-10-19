@@ -101,7 +101,7 @@ $v = $stmt->fetch();
     input[type="submit"] {
       width: 100%;
       padding: 12px;
-      background-color: #3498db;
+      background-color: #2c3e5b;
       color: white;
       border: none;
       border-radius: 5px;

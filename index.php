@@ -78,7 +78,7 @@
     input[type="submit"] {
       width: 100%;
       padding: 12px;
-      background-color: #3498db;
+      background-color: #2c3e50;
       color: white;
       border: none;
       border-radius: 5px;
@@ -89,7 +89,7 @@
     }
 
     input[type="submit"]:hover {
-      background-color: #2980b9;
+      background-color: #3498db;
     }
 
     .link {
